@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 12px;
+        }
+        /* CSS for submit button */
+        form button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        /* CSS for form border */
+        form {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 20px;
+        }
+    </style>
+    <title>Home</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let form = document.querySelector('form');
+            let nameInput = document.getElementById('name');
+            let nameErrorMessage = document.getElementById('name-error');
+            let emailInput = document.getElementById('email');
+            let emailErrorMessage = document.getElementById('email-error');
+            let panInput = document.getElementById('pan');
+            let panErrorMessage = document.getElementById('pan-error');
+            let loanInput = document.getElementById('loan');
+            let loanWords = document.getElementById('loan-words');
+
+            form.addEventListener('submit', function(event) {
+                if (!validateName() || !validateEmail() || !validatePAN()) {
+                    event.preventDefault();
+                    alert('Please enter a valid information.');
+                }
+                else {
+                    // Valid form data, proceed to confirm.html
+                    let name = nameInput.value.trim();
+                    let email = emailInput.value.trim();
+
+                    // Save data in localStorage for access on the confirm.html page
+                    localStorage.setItem('name', name);
+                    localStorage.setItem('email', email);
+
+                    // Redirect to confirm.html
+                    window.location.href = 'confirm.html';
+                }
+            });
+
+            nameInput.addEventListener('input', function() {
+                validateName();
+            });
+
+            emailInput.addEventListener('input', function() {
+                validateEmail();
+            });
+
+            panInput.addEventListener('input', function() {
+                validatePAN();
+            });
+
+            function validateName() {
+                let nameValue = nameInput.value.trim();
+                let nameWords = nameValue.split(' ');
+
+                if (nameWords.length < 2) {
+                    nameErrorMessage.textContent = 'Please enter at least 2 words.';
+                    return false;
+                }
+
+                for (let i = 0; i < nameWords.length; i++) {
+                    if (nameWords[i].length < 4) {
+                        nameErrorMessage.textContent = 'Each word should have at least 4 characters.';
+                        return false;
+                    }
+                }
+
+                nameErrorMessage.textContent = '';
+                return true;
+            }
+
+            function validateEmail() {
+                let emailValue = emailInput.value.trim();
+                let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!emailPattern.test(emailValue)) {
+                    emailErrorMessage.textContent = 'Please enter a valid email address.';
+                    return false;
+                }
+
+                emailErrorMessage.textContent = '';
+                return true;
+            }
+
+            function validatePAN() {
+                let panValue = panInput.value.trim();
+                let panPattern = /^[A-Z0-9]+$/;
+
+                if (panValue.length !== 10 || !panPattern.test(panValue)) {
+                    panErrorMessage.textContent = 'Please enter a valid PAN number.';
+                    return false;
+                }
+
+                panErrorMessage.textContent = '';
+                return true;
+            }
+
+            loanInput.addEventListener('input', function() {
+                let loanAmount = Number(loanInput.value);
+                loanWords.textContent = convertToWords(loanAmount);
+            });
+
+            function convertToWords(number) {
+                const units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+                const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+                const scales = ['', 'thousand', 'million', 'billion', 'trillion'];
+
+                if (number === 0) {
+                    return 'zero';
+                }
+
+                let words = '';
+
+                for (let i = scales.length - 1; i >= 0; i--) {
+                    let scale = 10 ** (3 * i);
+                    let current = Math.floor(number / scale);
+
+                    if (current !== 0) {
+                        let hundreds = Math.floor(current / 100);
+                        let tensUnits = current % 100;
+
+                        if (hundreds !== 0) {
+                            words += units[hundreds] + ' hundred ';
+                        }
+
+                        if (tensUnits !== 0) {
+                            if (tensUnits < 20) {
+                                words += units[tensUnits] + ' ';
+                            } else {
+                                let tensDigit = Math.floor(tensUnits / 10);
+                                let unitsDigit = tensUnits % 10;
+                                words += tens[tensDigit] + ' ' + units[unitsDigit] + ' ';
+                            }
+                        }
+
+                        words += scales[i] + ' ';
+                    }
+
+                    number %= scale;
+                }
+
+                return words.trim();
+            }
+        });
+    </script>
+</head>
+<body>
+<h1> LOAN APPLICATION </h1>
+    <div class="container">
+        <div class="col-md-8">
+            <form action="confirm.html" method="post">
+                <label for="name">Full Name</label><br>
+                <input type="text" name="" id="name" placeholder="Full Name *"><br>
+                <span class="error-message" id="name-error"></span><br><br>
+                <label for="email">Email</label><br>
+                <input type="text" name="" id="email" placeholder="Email *"><br>
+                <span class="error-message" id="email-error"></span><br><br>
+                <label for="pan">PAN</label><br>
+                <input type="text" name="" id="pan" maxlength="10" placeholder="PAN *"><br>
+                <span class="error-message" id="pan-error"></span><br><br>
+                <label for="loan">Loan Amount</label><br>
+                <input type="text" name="" id="loan" placeholder="Loan Amount *"><br>
+                <span id="loan-words"></span><br><br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
