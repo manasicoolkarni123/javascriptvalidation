@@ -53,8 +53,6 @@
 
                     // Redirect to confirm.html
                     window.location.href = 'confirm.html';
-                    //this is new change 
-                    //suppose you have changed here 
                 }
             });
 
@@ -116,52 +114,35 @@
                 return true;
             }
 
-            loanInput.addEventListener('input', function() {
+          function calculateEMI(loanAmount, interestRate, tenure) {
+                // Convert interest rate from percentage to decimal
+                interestRate = interestRate / 100;
+                
+                // Convert tenure from years to months
+                tenure = tenure * 12;
+                
+                // Calculate monthly interest rate
+                let monthlyInterestRate = interestRate / 12;
+                
+                // Calculate EMI using the formula
+                let emi = (loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, tenure)) /
+                          (Math.pow(1 + monthlyInterestRate, tenure) - 1);
+                
+                // Return the calculated EMI rounded to 2 decimal places
+                return emi.toFixed(2);
+              }
+
+              loanInput.addEventListener('input', function() {
                 let loanAmount = Number(loanInput.value);
-                loanWords.textContent = convertToWords(loanAmount);
-            });
-
-            function convertToWords(number) {
-                const units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-                const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-                const scales = ['', 'thousand', 'million', 'billion', 'trillion'];
-
-                if (number === 0) {
-                    return 'zero';
-                }
-
-                let words = '';
-
-                for (let i = scales.length - 1; i >= 0; i--) {
-                    let scale = 10 ** (3 * i);
-                    let current = Math.floor(number / scale);
-
-                    if (current !== 0) {
-                        let hundreds = Math.floor(current / 100);
-                        let tensUnits = current % 100;
-
-                        if (hundreds !== 0) {
-                            words += units[hundreds] + ' hundred ';
-                        }
-
-                        if (tensUnits !== 0) {
-                            if (tensUnits < 20) {
-                                words += units[tensUnits] + ' ';
-                            } else {
-                                let tensDigit = Math.floor(tensUnits / 10);
-                                let unitsDigit = tensUnits % 10;
-                                words += tens[tensDigit] + ' ' + units[unitsDigit] + ' ';
-                            }
-                        }
-
-                        words += scales[i] + ' ';
-                    }
-
-                    number %= scale;
-                }
-
-                return words.trim();
-            }
+                
+                let interestRate = 8.5; // 8.5%
+                let tenure = 15; // 15 years
+                
+                let emi = calculateEMI(loanAmount, interestRate, tenure);
+                let emiSpan = document.getElementById('emi-amount');
+                emiSpan.textContent = emi;
+        })
+                               
         });
     </script>
 </head>
@@ -181,7 +162,8 @@
                 <span class="error-message" id="pan-error"></span><br><br>
                 <label for="loan">Loan Amount</label><br>
                 <input type="text" name="" id="loan" placeholder="Loan Amount *"><br>
-                <span id="loan-words"></span><br><br>
+                <label for="emi">Estimated EMI</label><br>
+                <span id="emi-amount"></span><br><br>
                 <button type="submit">Submit</button>
             </form>
         </div>
