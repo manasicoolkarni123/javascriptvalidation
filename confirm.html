@@ -3,83 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>        /* CSS for the submit button */
-        button[type="submit"] {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 4px;
-        } </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let name = localStorage.getItem('name');
-            let email = localStorage.getItem('email');
-        
-            // Use the name and email values as needed
-            console.log('Name:', name);
-            console.log('Email:', email);
-
-              // Get the elements to display the name and email
-            let nameElement = document.getElementById('user-name');
-            let emailElement = document.getElementById('user-email');
-
-            // Set the name and email values in the elements
-            nameElement.textContent = name;
-            emailElement.textContent = email;
-        
-            // Clear the stored values from localStorage
-            localStorage.removeItem('name');
-            localStorage.removeItem('email');
-
-              // Generate a random 4-digit OTP
-            let otp = Math.floor(1000 + Math.random() * 9000);
-            console.log(otp);
-             // Store the OTP in localStorage
-            localStorage.setItem('otp', otp);
-            localStorage.setItem('attempts', 0);
-
-            // Get the form and input elements
-            let form = document.querySelector('form');
-            let otpInput = document.getElementById('otp');
-
-            // Declare attempts variable outside the event listener function
-            let attempts;
-
-            // Add event listener for form submission
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                // Get the entered OTP
-                let enteredOTP = otpInput.value;
-
-                // Get the stored OTP and attempt count from localStorage
-                let storedOTP = localStorage.getItem('otp');
-                attempts = Number(localStorage.getItem('attempts'));
-
-                // Check if the entered OTP matches the stored OTP
-                if (enteredOTP === storedOTP) {
-                    alert('OTP verification successful!');
-                    // Perform any further actions on successful verification
-                    location.href='https://pixel6.co/';
-                } else {
-                    attempts++;
-                    localStorage.setItem('attempts', attempts);
-
-                    if (attempts >= 3) {
-                        alert('OTP verification failed. Redirecting to a different URL.');
-                        location.href = 'https://pixel6.co/404';
-                    } else {
-                        alert('OTP verification failed. Please try again.');
-                        otpInput.value = '';
-                    }
-                }
-            });
-        });
-    </script>
-    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+<title>Document</title>
 </head>
 <body>
     Dear <span id="user-name"></span>,
@@ -89,5 +14,6 @@
             <input type="text" name="" id="otp" maxlength="4">
             <button type="submit"> Verify </button>
         </form>
+        <script src="js/style.js"></script>
 </body>
 </html>
