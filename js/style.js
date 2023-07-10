@@ -29,41 +29,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    nameInput.addEventListener('input', function() {
+    nameInput.addEventListener('blur', function() {
         validateName();
     });
 
-    emailInput.addEventListener('input', function() {
+    emailInput.addEventListener('blur', function() {
         validateEmail();
     });
 
-    panInput.addEventListener('input', function() {
+    panInput.addEventListener('blur', function() {
         validatePAN();
     });
 
     function validateName() {
         let nameValue = nameInput.value.trim();
         let nameWords = nameValue.split(' ');
-
-        if (nameWords.length < 2) {
-            nameErrorMessage.textContent = 'Please enter at least 2 words.';
+    
+        if (nameWords.length <2) {
+            nameErrorMessage.textContent = 'Please enter atleast 2 words.';
             return false;
         }
-
+    
         for (let i = 0; i < nameWords.length; i++) {
             if (nameWords[i].length < 4) {
                 nameErrorMessage.textContent = 'Each word should have at least 4 characters.';
                 return false;
             }
+    
+            //  if the word contains any numbers or symbols
+            if (/\d/.test(nameWords[i]) || /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(nameWords[i])) {
+                nameErrorMessage.textContent = 'Name should not contain numbers or symbols.';
+                return false;
+            }
         }
-
+    
         nameErrorMessage.textContent = '';
         return true;
     }
-
+    
     function validateEmail() {
         let emailValue = emailInput.value.trim();
-        let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let emailPattern = /^[^\s@]+@[^\s@]+\.[a-zA-Z]+$/;
 
         if (!emailPattern.test(emailValue)) {
             emailErrorMessage.textContent = 'Please enter a valid email address.';
@@ -76,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function validatePAN() {
         let panValue = panInput.value.trim();
-        let panPattern = /^[A-Z0-9]+$/;
+        let panPattern = /^[A-Z0-9a-z]+$/;
 
         if (panValue.length !== 10 || !panPattern.test(panValue)) {
             panErrorMessage.textContent = 'Please enter a valid PAN number.';
@@ -119,12 +125,15 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //confirm
+      
 
 document.addEventListener('DOMContentLoaded', function() {
     let name = localStorage.getItem('name');
     let email = localStorage.getItem('email');
 
-    // Use the name and email values as needed
+
+
+ // Use the name and email values as needed
     console.log('Name:', name);
     console.log('Email:', email);
 
@@ -132,15 +141,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let nameElement = document.getElementById('user-name');
     let emailElement = document.getElementById('user-email');
 
-    // Set the name and email values in the elements
+
+  // Set the name and email values in the elements
     nameElement.textContent = name;
     emailElement.textContent = email;
+
 
     // Clear the stored values from localStorage
     localStorage.removeItem('name');
     localStorage.removeItem('email');
 
-      // Generate a random 4-digit OTP
+   // Generate a random 4-digit OTP
     let otp = Math.floor(1000 + Math.random() * 9000);
     console.log(otp);
      // Store the OTP in localStorage
@@ -154,33 +165,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Declare attempts variable outside the event listener function
     let attempts;
 
-    // Add event listener for form submission
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+            // Add event listener for form submission
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
 
-        // Get the entered OTP
-        let enteredOTP = otpInput.value;
+                // Get the entered OTP
+                let enteredOTP = otpInput.value;
 
-        // Get the stored OTP and attempt count from localStorage
-        let storedOTP = localStorage.getItem('otp');
-        attempts = Number(localStorage.getItem('attempts'));
+                // Get the stored OTP and attempt count from localStorage
+                let storedOTP = localStorage.getItem('otp');
+                attempts = Number(localStorage.getItem('attempts'));
 
-        // Check if the entered OTP matches the stored OTP
-        if (enteredOTP === storedOTP) {
-            alert('OTP verification successful!');
-            // Perform any further actions on successful verification
-            location.href='https://pixel6.co/';
-        } else {
-            attempts++;
-            localStorage.setItem('attempts', attempts);
+                // Check if the entered OTP matches the stored OTP
+                if (enteredOTP === storedOTP) {
+                    alert('OTP verification successful!');
+                    // Perform any further actions on successful verification
+                    location.href='https://pixel6.co/';
+                } else {
+                    attempts++;
+                    localStorage.setItem('attempts', attempts);
 
-            if (attempts >= 3) {
-                alert('OTP verification failed. Redirecting to a different URL.');
-                location.href = 'https://pixel6.co/404';
-            } else {
-                alert('OTP verification failed. Please try again.');
-                otpInput.value = '';
-            }
-        }
-    });
-});
+                    if (attempts >= 3) {
+                        alert('OTP verification failed. Redirecting to a different URL.');
+                        location.href = 'https://pixel6.co/404';
+                    } else {
+                        alert('OTP verification failed. Please try again.');
+                        otpInput.value = '';
+                    }
+                }
+            });
+        });
